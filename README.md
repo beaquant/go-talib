@@ -42,3 +42,12 @@ func main() {
 ## License
 
 MIT License  - see LICENSE for more details
+
+## Projects using this library
+
+- [Golang Crypto Trading Bot](https://github.com/saniales/golang-crypto-trading-bot) by [saniales](https://github.com/saniales)
+
+# Contributors
+
+- [Markcheno](https://github.com/markcheno) 
+- [Alessandro Sanino AKA saniales](https://github.com/saniales)

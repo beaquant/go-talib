@@ -6,7 +6,10 @@ Licensed under terms of MIT license (see LICENSE)
 // Package talib is a pure Go port of TA-Lib (http://ta-lib.org) Technical Analysis Library
 package talib
 
-import "math"
+import (
+	"errors"
+	"math"
+)
 
 // MaType - Moving average type
 type MaType int
@@ -5114,15 +5117,22 @@ func LinearReg(inReal []float64, inTimePeriod int) []float64 {
 	sumX := inTimePeriodF * (inTimePeriodF - 1) * 0.5
 	sumXSqr := inTimePeriodF * (inTimePeriodF - 1) * (2*inTimePeriodF - 1) / 6
 	divisor := sumX*sumX - inTimePeriodF*sumXSqr
+	//initialize values of sumY and sumXY over first (inTimePeriod) input values
+	sumXY := 0.0
+	sumY := 0.0
+	i := inTimePeriod
+	for i != 0 {
+		i--
+		tempValue1 := inReal[today-i]
+		sumY += tempValue1
+		sumXY += float64(i) * tempValue1
+	}
 	for today < len(inReal) {
-		sumXY := 0.0
-		sumY := 0.0
-		i := inTimePeriod
-		for i != 0 {
-			i--
-			tempValue1 := inReal[today-i]
-			sumY += tempValue1
-			sumXY += float64(i) * tempValue1
+		//sumX and sumXY are already available for first output value
+		if today > startIdx-1 {
+			tempValue2 := inReal[today-inTimePeriod]
+			sumXY += sumY - inTimePeriodF*tempValue2
+			sumY += inReal[today] - tempValue2
 		}
 		m := (inTimePeriodF*sumXY - sumX*sumY) / divisor
 		b := (sumY - m*sumX) / inTimePeriodF
@@ -5146,18 +5156,25 @@ func LinearRegAngle(inReal []float64, inTimePeriod int) []float64 {
 	sumX := inTimePeriodF * (inTimePeriodF - 1) * 0.5
 	sumXSqr := inTimePeriodF * (inTimePeriodF - 1) * (2*inTimePeriodF - 1) / 6
 	divisor := sumX*sumX - inTimePeriodF*sumXSqr
+	//initialize values of sumY and sumXY over first (inTimePeriod) input values
+	sumXY := 0.0
+	sumY := 0.0
+	i := inTimePeriod
+	for i != 0 {
+		i--
+		tempValue1 := inReal[today-i]
+		sumY += tempValue1
+		sumXY += float64(i) * tempValue1
+	}
 	for today < len(inReal) {
-		sumXY := 0.0
-		sumY := 0.0
-		i := inTimePeriod
-		for i != 0 {
-			i--
-			tempValue1 := inReal[today-i]
-			sumY += tempValue1
-			sumXY += float64(i) * tempValue1
+		//sumX and sumXY are already available for first output value
+		if today > startIdx-1 {
+			tempValue2 := inReal[today-inTimePeriod]
+			sumXY += sumY - inTimePeriodF*tempValue2
+			sumY += inReal[today] - tempValue2
 		}
 		m := (inTimePeriodF*sumXY - sumX*sumY) / divisor
-		outReal[outIdx] = math.Atan(m) * (180.0 / 3.14159265358979323846)
+		outReal[outIdx] = math.Atan(m) * (180.0 / math.Pi)
 		outIdx++
 		today++
 	}
@@ -5177,15 +5194,22 @@ func LinearRegIntercept(inReal []float64, inTimePeriod int) []float64 {
 	sumX := inTimePeriodF * (inTimePeriodF - 1) * 0.5
 	sumXSqr := inTimePeriodF * (inTimePeriodF - 1) * (2*inTimePeriodF - 1) / 6
 	divisor := sumX*sumX - inTimePeriodF*sumXSqr
+	//initialize values of sumY and sumXY over first (inTimePeriod) input values
+	sumXY := 0.0
+	sumY := 0.0
+	i := inTimePeriod
+	for i != 0 {
+		i--
+		tempValue1 := inReal[today-i]
+		sumY += tempValue1
+		sumXY += float64(i) * tempValue1
+	}
 	for today < len(inReal) {
-		sumXY := 0.0
-		sumY := 0.0
-		i := inTimePeriod
-		for i != 0 {
-			i--
-			tempValue1 := inReal[today-i]
-			sumY += tempValue1
-			sumXY += float64(i) * tempValue1
+		//sumX and sumXY are already available for first output value
+		if today > startIdx-1 {
+			tempValue2 := inReal[today-inTimePeriod]
+			sumXY += sumY - inTimePeriodF*tempValue2
+			sumY += inReal[today] - tempValue2
 		}
 		m := (inTimePeriodF*sumXY - sumX*sumY) / divisor
 		outReal[outIdx] = (sumY - m*sumX) / inTimePeriodF
@@ -5208,15 +5232,22 @@ func LinearRegSlope(inReal []float64, inTimePeriod int) []float64 {
 	sumX := inTimePeriodF * (inTimePeriodF - 1) * 0.5
 	sumXSqr := inTimePeriodF * (inTimePeriodF - 1) * (2*inTimePeriodF - 1) / 6
 	divisor := sumX*sumX - inTimePeriodF*sumXSqr
+	//initialize values of sumY and sumXY over first (inTimePeriod) input values
+	sumXY := 0.0
+	sumY := 0.0
+	i := inTimePeriod
+	for i != 0 {
+		i--
+		tempValue1 := inReal[today-i]
+		sumY += tempValue1
+		sumXY += float64(i) * tempValue1
+	}
 	for today < len(inReal) {
-		sumXY := 0.0
-		sumY := 0.0
-		i := inTimePeriod
-		for i != 0 {
-			i--
-			tempValue1 := inReal[today-i]
-			sumY += tempValue1
-			sumXY += float64(i) * tempValue1
+		//sumX and sumXY are already available for first output value
+		if today > startIdx-1 {
+			tempValue2 := inReal[today-inTimePeriod]
+			sumXY += sumY - inTimePeriodF*tempValue2
+			sumY += inReal[today] - tempValue2
 		}
 		outReal[outIdx] = (inTimePeriodF*sumXY - sumX*sumY) / divisor
 		outIdx++
@@ -5265,15 +5296,22 @@ func Tsf(inReal []float64, inTimePeriod int) []float64 {
 	sumX := inTimePeriodF * (inTimePeriodF - 1.0) * 0.5
 	sumXSqr := inTimePeriodF * (inTimePeriodF - 1) * (2*inTimePeriodF - 1) / 6
 	divisor := sumX*sumX - inTimePeriodF*sumXSqr
+	//initialize values of sumY and sumXY over first (inTimePeriod) input values
+	sumXY := 0.0
+	sumY := 0.0
+	i := inTimePeriod
+	for i != 0 {
+		i--
+		tempValue1 := inReal[today-i]
+		sumY += tempValue1
+		sumXY += float64(i) * tempValue1
+	}
 	for today < len(inReal) {
-		sumXY := 0.0
-		sumY := 0.0
-		i := inTimePeriod
-		for i != 0 {
-			i--
-			tempValue1 := inReal[today-i]
-			sumY += tempValue1
-			sumXY += float64(i) * tempValue1
+		//sumX and sumXY are already available for first output value
+		if today > startIdx-1 {
+			tempValue2 := inReal[today-inTimePeriod]
+			sumXY += sumY - inTimePeriodF*tempValue2
+			sumY += inReal[today] - tempValue2
 		}
 		m := (inTimePeriodF*sumXY - sumX*sumY) / divisor
 		b := (sumY - m*sumX) / inTimePeriodF
@@ -5824,4 +5862,128 @@ func Sum(inReal []float64, inTimePeriod int) []float64 {
 	}
 
 	return outReal
+}
+
+// HeikinashiCandles - from candle values extracts heikinashi candle values.
+//
+// Returns highs, opens, closes and lows of the heikinashi candles (in this order).
+//
+//    NOTE: The number of Heikin-Ashi candles will always be one less than the number of provided candles, due to the fact
+//          that a previous candle is necessary to calculate the Heikin-Ashi candle, therefore the first provided candle is not considered
+//          as "current candle" in the algorithm, but only as "previous candle".
+func HeikinashiCandles(highs []float64, opens []float64, closes []float64, lows []float64) ([]float64, []float64, []float64, []float64) {
+	N := len(highs)
+
+	heikinHighs := make([]float64, N)
+	heikinOpens := make([]float64, N)
+	heikinCloses := make([]float64, N)
+	heikinLows := make([]float64, N)
+
+	for currentCandle := 1; currentCandle < N; currentCandle++ {
+		previousCandle := currentCandle - 1
+
+		heikinHighs[currentCandle] = math.Max(highs[currentCandle], math.Max(opens[currentCandle], closes[currentCandle]))
+		heikinOpens[currentCandle] = (opens[previousCandle] + closes[previousCandle]) / 2
+		heikinCloses[currentCandle] = (highs[currentCandle] + opens[currentCandle] + closes[currentCandle] + lows[currentCandle]) / 4
+		heikinLows[currentCandle] = math.Min(highs[currentCandle], math.Min(opens[currentCandle], closes[currentCandle]))
+	}
+
+	return heikinHighs, heikinOpens, heikinCloses, heikinLows
+}
+
+// Hlc3 returns the Hlc3 values
+//
+//     NOTE: Every Hlc item is defined as follows : (high + low + close) / 3
+//           It is used as AvgPrice candle.
+func Hlc3(highs []float64, lows []float64, closes []float64) []float64 {
+	N := len(highs)
+	result := make([]float64, N)
+	for i := range highs {
+		result[i] = (highs[i] + lows[i] + closes[i]) / 3
+	}
+
+	return result
+}
+
+// Crossover returns true if series1 is crossing over series2.
+//
+//    NOTE: Usually this is used with Media Average Series to check if it crosses for buy signals.
+//          It assumes first values are the most recent.
+//          The crossover function does not use most recent value, since usually it's not a complete candle.
+//          The second recent values and the previous are used, instead.
+func Crossover(series1 []float64, series2 []float64) bool {
+	if len(series1) < 3 || len(series2) < 3 {
+		return false
+	}
+
+	N := len(series1)
+
+	return series1[N-2] <= series2[N-2] && series1[N-1] > series2[N-1]
+}
+
+// Crossunder returns true if series1 is crossing under series2.
+//
+//    NOTE: Usually this is used with Media Average Series to check if it crosses for sell signals.
+func Crossunder(series1 []float64, series2 []float64) bool {
+	if len(series1) < 3 || len(series2) < 3 {
+		return false
+	}
+
+	N := len(series1)
+
+	return series1[N-1] <= series2[N-1] && series1[N-2] > series2[N-2]
+}
+
+// GroupCandles groups a set of candles in another set of candles, basing on a grouping factor.
+//
+// This is pretty useful if you want to transform, for example, 15min candles into 1h candles using same data.
+//
+// This avoid calling multiple times the exchange for multiple contexts.
+//
+// Example:
+//     To transform 15 minute candles in 30 minutes candles you have a grouping factor = 2
+//
+//     To transform 15 minute candles in 1 hour candles you have a grouping factor = 4
+//
+//     To transform 30 minute candles in 1 hour candles you have a grouping factor = 2
+func GroupCandles(highs []float64, opens []float64, closes []float64, lows []float64, groupingFactor int) ([]float64, []float64, []float64, []float64, error) {
+	N := len(highs)
+	if groupingFactor == 0 {
+		return nil, nil, nil, nil, errors.New("Grouping factor must be > 0")
+	} else if groupingFactor == 1 {
+		return highs, opens, closes, lows, nil // no need to group in this case, return the parameters.
+	}
+	if N%groupingFactor > 0 {
+		return nil, nil, nil, nil, errors.New("Cannot group properly, need a groupingFactor which is a factor of the number of candles")
+	}
+
+	groupedN := N / groupingFactor
+
+	groupedHighs := make([]float64, groupedN)
+	groupedOpens := make([]float64, groupedN)
+	groupedCloses := make([]float64, groupedN)
+	groupedLows := make([]float64, groupedN)
+
+	lastOfCurrentGroup := groupingFactor - 1
+
+	k := 0
+	for i := 0; i < N; i += groupingFactor { // scan all param candles
+		groupedOpens[k] = opens[i]
+		groupedCloses[k] = closes[i+lastOfCurrentGroup]
+
+		groupedHighs[k] = highs[i]
+		groupedLows[k] = lows[i]
+
+		endOfCurrentGroup := i + lastOfCurrentGroup
+		for j := i + 1; j <= endOfCurrentGroup; j++ { // group high lows candles here
+			if lows[j] < groupedLows[k] {
+				groupedLows[k] = lows[j]
+			}
+			if highs[j] > groupedHighs[k] {
+				groupedHighs[k] = highs[j]
+			}
+		}
+		k++
+	}
+	return groupedHighs, groupedOpens, groupedCloses, groupedLows, nil
 }
